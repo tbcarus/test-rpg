@@ -6,7 +6,7 @@ import java.util.Date;
 @Entity
 public class Player {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     private Long id;
     private String name;
     private String title;
@@ -96,7 +96,6 @@ public class Player {
         this.id = id;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
