@@ -30,7 +30,7 @@ public class RestPlayerController {
                                                    @RequestParam(value = "profession", required = false) Profession profession,
                                                    @RequestParam(value = "after", required = false, defaultValue = "0") Long after,
                                                    @RequestParam(value = "before", required = false, defaultValue = "9223372036854775807") Long before,
-                                                   @RequestParam(value = "banned", required = false, defaultValue = "false") Boolean banned,
+                                                   @RequestParam(value = "banned", required = false) Boolean banned,
                                                    @RequestParam(value = "minExperience", required = false, defaultValue = "0") Integer minExperience,
                                                    @RequestParam(value = "maxExperience", required = false, defaultValue = "2147483647") Integer maxExperience,
                                                    @RequestParam(value = "minLevel", required = false, defaultValue = "0") Integer minLevel,
@@ -58,17 +58,25 @@ public class RestPlayerController {
     }
 
     @GetMapping("/players/count")
-    public Integer getPlayerCount(@RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "title", required = false) String title,
+    public Integer getPlayerCount(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
+                                  @RequestParam(value = "title", required = false, defaultValue = "%") String title,
                                   @RequestParam(value = "race", required = false) Race race,
                                   @RequestParam(value = "profession", required = false) Profession profession,
-                                  @RequestParam(value = "after", required = false) Long after,
-                                  @RequestParam(value = "before", required = false) Long before,
+                                  @RequestParam(value = "after", required = false, defaultValue = "0") Long after,
+                                  @RequestParam(value = "before", required = false, defaultValue = "9223372036854775807") Long before,
                                   @RequestParam(value = "banned", required = false) Boolean banned,
-                                  @RequestParam(value = "minExperience", required = false) Integer minExperience,
-                                  @RequestParam(value = "maxExperience", required = false) Integer maxExperience,
-                                  @RequestParam(value = "minLevel", required = false) Integer minLevel,
-                                  @RequestParam(value = "maxLevel", required = false) Integer maxLevel) {
-        return playerService.count();
+                                  @RequestParam(value = "minExperience", required = false, defaultValue = "0") Integer minExperience,
+                                  @RequestParam(value = "maxExperience", required = false, defaultValue = "2147483647") Integer maxExperience,
+                                  @RequestParam(value = "minLevel", required = false, defaultValue = "0") Integer minLevel,
+                                  @RequestParam(value = "maxLevel", required = false, defaultValue = "2147483647") Integer maxLevel) {
+        return playerService.count(
+                name,
+                title,
+                race,
+                profession,
+                after, before,
+                banned,
+                minExperience, maxExperience,
+                minLevel, maxLevel);
     }
 }
