@@ -7,6 +7,7 @@ import com.game.service.PlayerService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class RestPlayerController {
     }
 
     @GetMapping("/players")
-    public ResponseEntity<List<Player>> getPlayers(@RequestParam(value = "name", required = false) String name,
+    public ResponseEntity<List<Player>> getPlayers(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
                                                    @RequestParam(value = "title", required = false) String title,
                                                    @RequestParam(value = "race", required = false) Race race,
                                                    @RequestParam(value = "profession", required = false) Profession profession,
@@ -40,7 +41,9 @@ public class RestPlayerController {
                                                    @RequestParam(value = "pageSize", required = false, defaultValue = "3") Integer pageSize) {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()));
-        return new ResponseEntity<>(playerService.getPlayers(pageable), HttpStatus.OK);
+
+        Specification<Player> specification = Specification.where(playerService.filterByName(name));
+        return new ResponseEntity<>(playerService.getPlayers(specification, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/players/{id}")
