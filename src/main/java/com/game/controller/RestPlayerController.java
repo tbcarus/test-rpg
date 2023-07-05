@@ -26,7 +26,7 @@ public class RestPlayerController {
 
     @GetMapping("/players")
     public ResponseEntity<List<Player>> getPlayers(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
-                                                   @RequestParam(value = "title", required = false) String title,
+                                                   @RequestParam(value = "title", required = false, defaultValue = "%") String title,
                                                    @RequestParam(value = "race", required = false) Race race,
                                                    @RequestParam(value = "profession", required = false) Profession profession,
                                                    @RequestParam(value = "after", required = false) Long after,
@@ -42,7 +42,14 @@ public class RestPlayerController {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(order.getFieldName()));
 
-        Specification<Player> specification = Specification.where(playerService.filterByName(name));
+        Specification<Player> specification = Specification.where(playerService.filterByName(name)
+                .and(playerService.filterByTitle(title))
+                .and(playerService.filterByRace(race))
+                .and(playerService.filterByProfession(profession))
+                .and(playerService.filterByDate(after, before))
+                .and(playerService.filterBanned(banned))
+                .and(playerService.filterByRange("experience", minExperience, maxExperience))
+                .and(playerService.filterByRange("level", minLevel, maxLevel)));
         return new ResponseEntity<>(playerService.getPlayers(specification, pageable), HttpStatus.OK);
     }
 
