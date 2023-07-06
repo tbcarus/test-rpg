@@ -59,8 +59,8 @@ public class RestPlayerController {
     }
 
     @GetMapping("/players/count")
-    public Integer getPlayerCount(@RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "title", required = false) String title,
+    public ResponseEntity<Integer> getPlayerCount(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
+                                  @RequestParam(value = "title", required = false, defaultValue = "%") String title,
                                   @RequestParam(value = "race", required = false) Race race,
                                   @RequestParam(value = "profession", required = false) Profession profession,
                                   @RequestParam(value = "after", required = false) Long after,
@@ -70,6 +70,14 @@ public class RestPlayerController {
                                   @RequestParam(value = "maxExperience", required = false) Integer maxExperience,
                                   @RequestParam(value = "minLevel", required = false) Integer minLevel,
                                   @RequestParam(value = "maxLevel", required = false) Integer maxLevel) {
-        return playerService.count();
+        Specification<Player> specification = Specification.where(playerService.filterByName(name)
+                .and(playerService.filterByTitle(title))
+                .and(playerService.filterByRace(race))
+                .and(playerService.filterByProfession(profession))
+                .and(playerService.filterByDate(after, before))
+                .and(playerService.filterBanned(banned))
+                .and(playerService.filterByRange("experience", minExperience, maxExperience))
+                .and(playerService.filterByRange("level", minLevel, maxLevel)));
+        return new ResponseEntity<>(playerService.count(specification), HttpStatus.OK);
     }
 }

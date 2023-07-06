@@ -32,8 +32,8 @@ public class PlayerService {
         return playerRepository.findById(id).get();
     }
 
-    public Integer count() {
-        return playerRepository.findAll().size();
+    public Integer count(Specification<Player> specification) {
+        return playerRepository.findAll(specification).size();
     }
 
     public Specification<Player> filterByName(String name) {
