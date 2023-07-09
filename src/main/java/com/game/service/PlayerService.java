@@ -4,6 +4,7 @@ import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
 import com.game.error.BadRequestException;
+import com.game.error.NotFoundException;
 import com.game.repository.PlayerRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerService {
@@ -49,12 +51,37 @@ public class PlayerService {
         if (player.getBanned() == null) {
             player.setBanned(false);
         }
-        int level = (int) (Math.sqrt(2500 + 200 * player.getExperience()) - 50) / 100;
-        int expToNextLvl = 50 * (level + 1) * (level + 2) - player.getExperience();
+        int level = calcLvl(player.getExperience());
+        int expToNextLvl = calcToNextLvl(level, player.getExperience());
         player.setLevel(level);
         player.setUntilNextLevel(expToNextLvl);
 
         return playerRepository.save(player);
+    }
+
+    public Player getPlayer(String idStr) {
+        long id;
+        try {
+            id = Long.parseLong(idStr);
+        } catch (Exception exc) {
+            throw new BadRequestException();
+        }
+        if (id <= 0) {
+            throw new BadRequestException();
+        }
+        Optional<Player> opt = playerRepository.findById(id);
+        if (!opt.isPresent()) {
+            throw new NotFoundException();
+        }
+        return opt.get();
+    }
+
+    private int calcLvl(int exp) {
+        return (int) (Math.sqrt(2500 + 200 * exp) - 50) / 100;
+    }
+
+    private int calcToNextLvl(int level, int exp) {
+        return 50 * (level + 1) * (level + 2) - exp;
     }
 
     private void checkName(String name) {

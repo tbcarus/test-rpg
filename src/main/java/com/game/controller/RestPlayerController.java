@@ -53,11 +53,6 @@ public class RestPlayerController {
         return new ResponseEntity<>(playerService.getPlayers(specification, pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/players/{id}")
-    public Player getById(@PathVariable String id) {
-        return playerService.getById(Long.parseLong(id));
-    }
-
     @GetMapping("/players/count")
     public ResponseEntity<Integer> getPlayerCount(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
                                                   @RequestParam(value = "title", required = false, defaultValue = "%") String title,
@@ -83,7 +78,11 @@ public class RestPlayerController {
 
     @PostMapping("/players")
     public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
-
         return new ResponseEntity<>(playerService.createPlayer(player), HttpStatus.OK);
+    }
+
+    @GetMapping("/players/{id}")
+    public ResponseEntity<Player> getPlayer(@PathVariable String id) {
+        return new ResponseEntity<Player>(playerService.getPlayer(id), HttpStatus.OK);
     }
 }
