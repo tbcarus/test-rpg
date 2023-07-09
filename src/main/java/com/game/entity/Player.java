@@ -7,6 +7,7 @@ import java.util.Date;
 public class Player {
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String title;

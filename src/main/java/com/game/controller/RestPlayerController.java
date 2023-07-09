@@ -60,16 +60,16 @@ public class RestPlayerController {
 
     @GetMapping("/players/count")
     public ResponseEntity<Integer> getPlayerCount(@RequestParam(value = "name", required = false, defaultValue = "%") String name,
-                                  @RequestParam(value = "title", required = false, defaultValue = "%") String title,
-                                  @RequestParam(value = "race", required = false) Race race,
-                                  @RequestParam(value = "profession", required = false) Profession profession,
-                                  @RequestParam(value = "after", required = false) Long after,
-                                  @RequestParam(value = "before", required = false) Long before,
-                                  @RequestParam(value = "banned", required = false) Boolean banned,
-                                  @RequestParam(value = "minExperience", required = false) Integer minExperience,
-                                  @RequestParam(value = "maxExperience", required = false) Integer maxExperience,
-                                  @RequestParam(value = "minLevel", required = false) Integer minLevel,
-                                  @RequestParam(value = "maxLevel", required = false) Integer maxLevel) {
+                                                  @RequestParam(value = "title", required = false, defaultValue = "%") String title,
+                                                  @RequestParam(value = "race", required = false) Race race,
+                                                  @RequestParam(value = "profession", required = false) Profession profession,
+                                                  @RequestParam(value = "after", required = false) Long after,
+                                                  @RequestParam(value = "before", required = false) Long before,
+                                                  @RequestParam(value = "banned", required = false) Boolean banned,
+                                                  @RequestParam(value = "minExperience", required = false) Integer minExperience,
+                                                  @RequestParam(value = "maxExperience", required = false) Integer maxExperience,
+                                                  @RequestParam(value = "minLevel", required = false) Integer minLevel,
+                                                  @RequestParam(value = "maxLevel", required = false) Integer maxLevel) {
         Specification<Player> specification = Specification.where(playerService.filterByName(name)
                 .and(playerService.filterByTitle(title))
                 .and(playerService.filterByRace(race))
@@ -79,5 +79,11 @@ public class RestPlayerController {
                 .and(playerService.filterByRange("experience", minExperience, maxExperience))
                 .and(playerService.filterByRange("level", minLevel, maxLevel)));
         return new ResponseEntity<>(playerService.count(specification), HttpStatus.OK);
+    }
+
+    @PostMapping("/players")
+    public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
+
+        return new ResponseEntity<>(playerService.createPlayer(player), HttpStatus.OK);
     }
 }
