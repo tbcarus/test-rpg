@@ -60,6 +60,24 @@ public class PlayerService {
     }
 
     public Player getPlayer(String idStr) {
+        long id = checkId(idStr);
+        Optional<Player> opt = playerRepository.findById(id);
+        if (!opt.isPresent()) {
+            throw new NotFoundException();
+        }
+        return opt.get();
+    }
+
+    public void delete(String idStr) {
+        long id = checkId(idStr);
+        Optional<Player> opt = playerRepository.findById(id);
+        if (!opt.isPresent()) {
+            throw new NotFoundException();
+        }
+        playerRepository.deleteById(id);
+    }
+
+    private Long checkId(String idStr) {
         long id;
         try {
             id = Long.parseLong(idStr);
@@ -69,11 +87,7 @@ public class PlayerService {
         if (id <= 0) {
             throw new BadRequestException();
         }
-        Optional<Player> opt = playerRepository.findById(id);
-        if (!opt.isPresent()) {
-            throw new NotFoundException();
-        }
-        return opt.get();
+        return id;
     }
 
     private int calcLvl(int exp) {
