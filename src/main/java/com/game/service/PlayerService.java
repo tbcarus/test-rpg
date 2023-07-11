@@ -77,6 +77,45 @@ public class PlayerService {
         playerRepository.deleteById(id);
     }
 
+    public Player update(String idStr, Player upd) {
+        long id = checkId(idStr);
+        if (!playerRepository.existsById(id)) {
+            throw new NotFoundException();
+        }
+        Player player = playerRepository.findById(id).get();
+
+        if (upd.getName() != null) {
+            checkName(upd.getName());
+            player.setName(upd.getName());
+        }
+        if (upd.getTitle() != null) {
+            checkTitle(upd.getTitle());
+            player.setTitle(upd.getTitle());
+        }
+        if (upd.getRace() != null) {
+            player.setRace(upd.getRace());
+        }
+        if (upd.getProfession() != null) {
+            player.setProfession(upd.getProfession());
+        }
+        if (upd.getBirthday() != null) {
+            checkBirthday(upd.getBirthday().getTime());
+            player.setBirthday(upd.getBirthday());
+        }
+        if (upd.getBanned() != null) {
+            player.setBanned(upd.getBanned());
+        }
+        if (upd.getExperience() != null) {
+            checkExperience(upd.getExperience());
+            int level = calcLvl(upd.getExperience());
+            int expToNextLvl = calcToNextLvl(level, upd.getExperience());
+            player.setLevel(level);
+            player.setUntilNextLevel(expToNextLvl);
+            player.setExperience(upd.getExperience());
+        }
+        return playerRepository.save(player);
+    }
+
     private Long checkId(String idStr) {
         long id;
         try {

@@ -89,4 +89,9 @@ public class RestPlayerController {
     public void deletePlayer(@PathVariable String id) {
         playerService.delete(id);
     }
+
+    @PostMapping("/players/{id}")
+    public ResponseEntity<Player> updatePlayer(@PathVariable String id, @RequestBody Player player) {
+        return new ResponseEntity<>(playerService.update(id, player), HttpStatus.OK);
+    }
 }
